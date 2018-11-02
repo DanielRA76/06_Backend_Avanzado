@@ -7,7 +7,9 @@ const async = require('async');
 const db = require('./lib/connectMongoose');
 
 // Cargamos las definiciones de todos nuestros modelos
+// We load the definitions of all our models
 const Anuncio = require('./models/Anuncio');
+const User = require('./models/User');
 
 db.once('open', async function () {
   try {
@@ -15,7 +17,9 @@ db.once('open', async function () {
     if (answer.toLowerCase() === 'yes') {
       
       // Inicializar nuestros modelos
+      // Init models
       await initAnuncios();
+      await initUsers();
       
     } else {
       console.log('DB install aborted!');
@@ -50,6 +54,22 @@ async function initAnuncios() {
   console.log('Cargando ' + fichero + '...');
   const numLoaded = await Anuncio.cargaJson(fichero);
   console.log(`Se han cargado ${numLoaded} anuncios.`);
+
+  return numLoaded;
+
+}
+
+async function initUsers() {
+
+  await User.remove({});
+  console.log('Users delete.');
+
+  // Cargar anuncios.json
+  const fichero = './users.json';
+
+  console.log('Load ' + fichero + '...');
+  const numLoaded = await User.cargaJson(fichero);
+  console.log(`${numLoaded} users have been loaded.`);
 
   return numLoaded;
 
